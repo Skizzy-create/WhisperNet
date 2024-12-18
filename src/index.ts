@@ -1,14 +1,25 @@
 import readlineSync from 'readline-sync';
+import bcrypt from "bcrypt";
 import { getStartIndex, startOptions } from './util/options.js';
 import { welcome, initializeNetwork } from './util/starting.js'; // Importing the new functions
 // import UserDatabase from './Database/userDB.js';
 import generateUID from './util/generateUID.js';
+import userDatabase from './Database/userDB.js';
 
 // const userDatabase = new UserDatabase();
 
 async function main() {
-    await generateUID("user", "test", new Date(), "password");
+    const uid1 = await generateUID("user", "test", "password");
 
+    const userDb = new userDatabase();
+    await userDb.createUser("test", "password", uid1, new Date(), []);
+    await userDb.createUser("test", "password", uid1, new Date(), []);
+    const userId = userDb.fetchUserId("test", "");
+    const name = readlineSync.question("Enter your name: ");
+    const password = readlineSync.question("Enter your password: ", { hideEchoBack: true });
+
+    const newUser = await userDb.createUser(name, password, uid1, new Date(), []);
+    console.log(newUser);
     // console.clear();
 
     // // Step 1: Welcome and Registration Flow

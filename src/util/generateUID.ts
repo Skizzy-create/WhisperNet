@@ -4,9 +4,9 @@ import bcrypt from "bcrypt";
 // username, doj using hash function
 
 
-const generateUID = async (type: "user" | "guest", username: string, doj: Date, password: string): Promise<string> => {
+const generateUID = async (type: "user", username: string, password: string): Promise<string> => {
     const salt = await bcrypt.genSalt(10);
-    const finalString = `${type}-${username}-${password}-${doj.toString()}`;
+    const finalString = `${type}-${username.toLowerCase()}-${password.toLowerCase()}`;
     console.log("final string = ", finalString);
     const hashedUID = await bcrypt.hash(finalString, salt);
     console.log("hashed UID = ", hashedUID);
