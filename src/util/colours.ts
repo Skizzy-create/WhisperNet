@@ -1,19 +1,11 @@
+// File: /d:/Projects/WhisperNet/src/util/colours.ts
+
 import chalk from "chalk";
 
-const ErrorRED = chalk.red; // For fatal errors
-const WarningYELLOW = chalk.yellow; // For warning messages
-const InfoBLUE = chalk.blue; // For informational messages
-const SuccessGREEN = chalk.green; // For success messages
-const DebugCYAN = chalk.cyan; // For debugging messages
-const NoticeORANGE = chalk.hex('#FFA500'); // For notices or important messages
-const StrangeMAGENTA = chalk.magenta; // For unusual or unexpected situations
+// Minimalistic color palette
+const ErrorRED = chalk.hex('#FF4C4C'); // For errors
+const SuccessGREEN = chalk.hex('#32CD32'); // For success messages
+const WarningYELLOW = chalk.hex('#FFD700'); // For warnings
+const cyan = chalk.cyan; // For cyan
 
-export {
-    ErrorRED,
-    WarningYELLOW,
-    NoticeORANGE,
-    SuccessGREEN,
-    InfoBLUE,
-    DebugCYAN,
-    StrangeMAGENTA
-}
+export { ErrorRED, SuccessGREEN, WarningYELLOW, cyan };

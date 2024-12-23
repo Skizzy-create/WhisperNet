@@ -1,9 +1,9 @@
+// /d:/Projects/WhisperNet/src/util/options.ts
+
 import readlineSync from 'readline-sync';
 export const startOptions = [
     "Login",
     "Register",
-    "Create Room",
-    "Join Room",
     "Settings",
     "Help",
     "Exit"

@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/auth/index.ts","./src/auth/login.ts","./src/database/userdb.ts","./src/util/colours.ts","./src/util/generateuid.ts","./src/util/options.ts","./src/util/starting.ts"],"version":"5.7.2"}
+{"root":["./src/index.ts","./src/auth/authops.ts","./src/database/userdb.ts","./src/pages/menusequence.ts","./src/pages/starting.ts","./src/util/colours.ts","./src/util/generateuid.ts","./src/util/options.ts"],"version":"5.7.2"}

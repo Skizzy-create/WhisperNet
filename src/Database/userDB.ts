@@ -1,25 +1,51 @@
-import { ErrorRED, InfoBLUE, NoticeORANGE, StrangeMAGENTA, SuccessGREEN, WarningYELLOW } from "../util/colours.js";
+// /d:/Projects/WhisperNet/src/Database/userDB.ts
+
+import { compare } from "bcrypt";
+import { hashPassword } from "../Auth/authOps.js";
+import { ErrorRED, SuccessGREEN, WarningYELLOW } from "../util/colours.js";
 import fs from 'fs';
-// Interface for guest users
+import generateUID from "../util/generateUID.js";
+import { error } from "console";
+
 interface User {
     username: string;
     uid: string;
+    password: string;
     dateOfJoining: Date;
     RoomId?: string[];
     socketId?: string;
-    password?: string;
 }
+
 class userDatabase {
     private users: User[] = [];
 
     constructor() {
-        console.log(InfoBLUE("User Database initialized!"));
+        console.log("User Database initialized!");
+        this.loadUsers();
     }
 
-    public checkDuplicateUser = async (username: string, password: string): Promise<boolean> => {
+    private loadUsers = async (): Promise<void> => {
+        console.log("Loading User data ....");
         try {
-            console.log(NoticeORANGE("Checking for duplicate users..."));
-            const user = this.users.find((user) => user.username === username && user.password === password);
+            const data = await fs.promises.readFile("data.json", "utf-8");
+            if (!data) {
+                console.log(WarningYELLOW("No data found!"));
+                return;
+            }
+            const users = JSON.parse(data);
+            this.users = users;
+            console.log(SuccessGREEN("User loaded sucessfully!"));
+        } catch (error) {
+            console.log(ErrorRED("Error while loading users!"))
+            console.error(error);
+        }
+    };
+
+    public checkDuplicateUser = async (username: string,): Promise<boolean> => {
+        try {
+            await this.logDataTofile();
+            console.log("Checking for duplicate users...");
+            const user = this.users.find((user) => user.username === username);
             if (user) {
                 console.log(WarningYELLOW("User already exists!"));
                 const { password, ...userWithoutPassword } = user;
@@ -33,42 +59,70 @@ class userDatabase {
             console.error(error);
             return true;
         }
-    }
-
-    public createUser = async (username: string, password: string, uid: string, dateOfJoining: Date, RoomId: string[]): Promise<void> => {
-        const abort = await this.checkDuplicateUser(username, password);
-        if (abort) {
-            console.log(WarningYELLOW("Aborting user creation!"));
-            return;
-        }
-        const user: User = {
-            username,
-            uid,
-            dateOfJoining,
-            RoomId,
-            password
-        }
-        this.users.push(user);
-        console.log(SuccessGREEN("User created successfully!", user.uid));
-        await this.logDataTofile();
     };
 
-    public fetchUserId = async (username: string, password: string): Promise<string | null> => {
-        console.log(NoticeORANGE("Fetching user ID..."));
-        const userId = this.users.find((user) => user.username === username && user.password === password);
-        if (userId) {
-            console.log(SuccessGREEN("User ID found!"));
-            console.log(StrangeMAGENTA("Id = ", userId.uid));
-            await this.logDataTofile();
-            return userId.uid;
+    public createUser = async (username: string, password: string, dateOfJoining: Date, RoomId: string[]): Promise<User | null> => {
+        console.log("Initializing Create User...");
+        const hashedPassword = await hashPassword(password);
+        const abort = await this.checkDuplicateUser(username,);
+        const hashedUid = await generateUID(username, password,);
+        if (abort) {
+            console.log(WarningYELLOW("Aborting user creation!"));
+            return null;
         }
-        console.log(WarningYELLOW("User ID not found!"));
+        const user: User = { username, uid: hashedUid, dateOfJoining, RoomId, password: hashedPassword };
+        this.users.push(user);
+        console.log(SuccessGREEN("User created successfully!"));
         await this.logDataTofile();
-        return null;
+        return user;
+    };
+
+    private fetchUserId = async (username: string,): Promise<string | null> => {
+        try {
+            console.log(WarningYELLOW("Fetching user ID..."));
+            const userId = this.users.find((user) => user.username === username);
+            if (userId) {
+                console.log(SuccessGREEN("User ID found!"));
+                await this.logDataTofile();
+                return userId.uid;
+            }
+            console.log(WarningYELLOW("User ID not found!"));
+            await this.logDataTofile();
+            return null;
+        } catch (error) {
+            console.log(ErrorRED("Error fetching user ID"));
+            return null;
+        }
+    };
+
+    public findOne = (criteria: Partial<User>, matchAll: boolean = false): Partial<User> | null => {
+        console.log("Looking for one user...");
+        try {
+            const user = this.users.find((user) => {
+                const conditions = [
+                    criteria.username ? user.username === criteria.username : true,
+                    criteria.uid ? user.uid === criteria.uid : true,
+                    criteria.dateOfJoining ? user.dateOfJoining === criteria.dateOfJoining : true,
+                    criteria.socketId ? user.socketId === criteria.socketId : true,
+                ];
+                return matchAll ? conditions.every(Boolean) : conditions.some(Boolean);
+            });
+            if (!user) {
+                console.log(WarningYELLOW("User not found!"));
+                return null;
+            }
+            console.log(SuccessGREEN("User found!"));
+            console.log(user);
+            return user;
+        } catch (error) {
+            console.log(ErrorRED("Error - FindOne --> User DB"));
+            console.error(error);
+            return null;
+        }
     };
 
     private logDataTofile = async (): Promise<void> => {
-        console.log(NoticeORANGE("Logging data to file..."));
+        console.log("Logging data to file...");
         const dataWithNewLines = JSON.stringify(this.users, null, 2);
         try {
             await fs.promises.writeFile('data.json', dataWithNewLines);
@@ -77,18 +131,18 @@ class userDatabase {
             console.log(ErrorRED("Error while logging data to file!"));
             console.error(error);
         }
-    }
-
+    };
 }
-// Function names from the UserDatabase class
-// checkDuplicateUser
-// createUser
-// createGuest
-// findUser
-// deleteUser
-// updateRegisteredUser
-// updateGuestUser
-// listAllUsers
-// findAllUsers
 
 export default userDatabase;
+
+// Function names from the UserDatabase class
+// checkDuplicateUser ✅
+// createUser ✅
+// fetchUserId ✅
+// findOne
+// findUserById
+// deleteUser
+// updateUser
+// listAllUsers
+// findAll
