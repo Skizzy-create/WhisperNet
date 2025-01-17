@@ -16,7 +16,7 @@ async function main() {
     const user2 = await userDb.createUser("user", "user", new Date("22-12-2024"), []);
     const user3 = await userDb.createUser("test", "test", new Date("23-12-2024"), []);
     welcome();
-    await enter(userDb);
+    await enter();
 }
 // Start the application
 main();

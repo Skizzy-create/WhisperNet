@@ -1,11 +1,9 @@
 // /d:/Projects/WhisperNet/src/Database/userDB.ts
 
-import { compare } from "bcrypt";
 import { hashPassword } from "../Auth/authOps.js";
 import { ErrorRED, SuccessGREEN, WarningYELLOW } from "../util/colours.js";
 import fs from 'fs';
 import generateUID from "../util/generateUID.js";
-import { error } from "console";
 
 interface User {
     username: string;
@@ -14,7 +12,7 @@ interface User {
     dateOfJoining: Date;
     RoomId?: string[];
     socketId?: string;
-}
+};
 
 class userDatabase {
     private users: User[] = [];
