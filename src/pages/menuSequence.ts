@@ -6,7 +6,7 @@ import { cyan, ErrorRED, WarningYELLOW } from '../util/colours.js';
 import userDatabase from '../Database/userDB.js';
 import { comparePassword } from '../Auth/authOps.js';
 
-export default async function enter(): Promise<void> {
+export default function enter(): void {
     console.log("You are now entering the WhisperNet...");
     const index = readlineSync.keyInSelect(startOptions, "What would you like to do? (enter the option number)");
     // const username = readlineSync.question("Enter your username :");
