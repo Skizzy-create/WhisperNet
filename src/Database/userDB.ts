@@ -128,7 +128,27 @@ class userDatabase {
         } catch (error) {
             console.log(ErrorRED("Error while logging data to file!"));
             console.error(error);
-        }
+        };
+    };
+
+    public updatePassword = async (username: string, UID: string, newPassword: string): Promise<boolean> => {
+        try {
+            console.log("Updating password...");
+            const user = this.users.find((user) => user.username === username && user.uid === UID);
+            if (!user) {
+                console.log(WarningYELLOW("User not found!"));
+                return false;
+            }
+            const hashedPassword = await hashPassword(newPassword);
+            user.password = hashedPassword;
+            await this.logDataTofile();
+            console.log(SuccessGREEN("Password updated successfully!"));
+            return true;
+        } catch (error) {
+            console.log(ErrorRED("Error while updating password!"));
+            console.error(error);
+            return false;
+        };
     };
 }
 
