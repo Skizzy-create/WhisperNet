@@ -13,6 +13,7 @@
   "author": "Kartik Aslia (its skizzy)",
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "chalk": "^5.3.0",
     "ora": "^8.1.1",
