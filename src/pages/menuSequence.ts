@@ -55,6 +55,9 @@ export default async function enter(AuthDB: AuthCreds): Promise<void> {
             console.log(ErrorRED(response.data.error));
             return;
         }
+        AuthDB.setUserID(response.data.user.uid);
+        AuthDB.setJWTToken(response.data.Token);
+
         console.log("Registration successful!");
     }
 };
