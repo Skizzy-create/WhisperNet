@@ -1,3 +1,5 @@
+// ../src/Auth/auth.ts
+
 class AuthCreds {
     private userID: string = "";
     private JWTTOKEN: string = "";

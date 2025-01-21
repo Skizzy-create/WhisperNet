@@ -1,10 +1,5 @@
 // File: /D:/Projects/WhisperNet/src/index.ts
-
-import readlineSync from 'readline-sync';
-import bcrypt from "bcrypt";
-import generateUID from './util/generateUID.js';
 import userDatabase from './Database/userDB.js';
-import { SuccessGREEN } from './util/colours.js';
 import { welcome } from './pages/starting.js';
 import enter from './pages/menuSequence.js';
 import AuthCreds from './Auth/auth.js';
